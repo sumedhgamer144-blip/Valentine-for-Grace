@@ -351,26 +351,17 @@ pointer-events:none;
 
 // ===== BACKGROUND MUSIC SYSTEM =====
 
-document.addEventListener("DOMContentLoaded", function () {
+let musicStarted = false;
+let bgMusic = document.getElementById("bgMusic");
 
-    let musicStarted = false;
-    let bgMusic = document.getElementById("bgMusic");
-
-    if (!bgMusic) {
-        console.log("Audio element not found");
-        return;
-    }
-
+if (bgMusic) {
     bgMusic.volume = 0;
 
     function playMusic() {
         if (!musicStarted) {
-            bgMusic.play().then(() => {
-                fadeInMusic();
-                musicStarted = true;
-            }).catch(error => {
-                console.log("Playback prevented:", error);
-            });
+            bgMusic.play().catch(() => {});
+            fadeInMusic();
+            musicStarted = true;
         }
     }
 
@@ -386,12 +377,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 200);
     }
 
-    // Start music on first click anywhere
     document.addEventListener("click", function () {
         playMusic();
     }, { once: true });
-
-});
+}
 
 // Required for mobile autoplay rules
 document.addEventListener("click", playMusic);
@@ -546,3 +535,4 @@ setTimeout(()=>heart.remove(),7000);
 </body>
 
 </html>
+
