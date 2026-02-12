@@ -350,36 +350,28 @@ pointer-events:none;
 <script>
 
 // ===== BACKGROUND MUSIC SYSTEM =====
-
 let musicStarted = false;
 let bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0;
 
-if (bgMusic) {
-    bgMusic.volume = 0;
+function playMusic() {
+  if (!musicStarted) {
+    bgMusic.play();
+    fadeInMusic();
+    musicStarted = true;
+  }
+}
 
-    function playMusic() {
-        if (!musicStarted) {
-            bgMusic.play().catch(() => {});
-            fadeInMusic();
-            musicStarted = true;
-        }
+function fadeInMusic(){
+  let vol = 0;
+  let fade = setInterval(function(){
+    if(vol < 0.4){
+      vol += 0.02;
+      bgMusic.volume = vol;
+    } else {
+      clearInterval(fade);
     }
-
-    function fadeInMusic() {
-        let vol = 0;
-        let fade = setInterval(function () {
-            if (vol < 0.4) {
-                vol += 0.02;
-                bgMusic.volume = vol;
-            } else {
-                clearInterval(fade);
-            }
-        }, 200);
-    }
-
-    document.addEventListener("click", function () {
-        playMusic();
-    }, { once: true });
+  }, 200);
 }
 
 // Required for mobile autoplay rules
@@ -533,6 +525,4 @@ setTimeout(()=>heart.remove(),7000);
 </script>
 
 </body>
-
 </html>
-
