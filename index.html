@@ -349,53 +349,41 @@ pointer-events:none;
 
 <script>
 
-// ===== BACKGROUND MUSIC SYSTEM (FIXED ONLY THIS PART) =====
+// ===== BACKGROUND MUSIC SYSTEM =====
 let musicStarted = false;
 let bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0;
 
-if (bgMusic) {
-
-  bgMusic.volume = 0;
-
-  function playMusic() {
-
-    if (!musicStarted) {
-
-      let playPromise = bgMusic.play();
-
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          fadeInMusic();
-          musicStarted = true;
-        }).catch(() => {
-          // Prevent autoplay error from breaking the rest of the script
-        });
-      }
-
-    }
-
+function playMusic() {
+  if (!musicStarted) {
+    bgMusic.play();
+    fadeInMusic();
+    musicStarted = true;
   }
-
-  function fadeInMusic(){
-    let vol = 0;
-    let fade = setInterval(function(){
-      if(vol < 0.4){
-        vol += 0.02;
-        bgMusic.volume = vol;
-      } else {
-        clearInterval(fade);
-      }
-    }, 200);
-  }
-
-  document.addEventListener("click", playMusic, { once: true });
-  document.addEventListener("touchstart", playMusic, { once: true });
 }
+
+function fadeInMusic(){
+  let vol = 0;
+  let fade = setInterval(function(){
+    if(vol < 0.4){
+      vol += 0.02;
+      bgMusic.volume = vol;
+    } else {
+      clearInterval(fade);
+    }
+  }, 200);
+}
+
+// Required for mobile autoplay rules
+document.addEventListener("click", playMusic);
+document.addEventListener("touchstart", playMusic);
 
 // ===== SECTION SWITCH =====
 function showSection(id){
 document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+
+// Play music when love page shows
 if(id === "love"){
   playMusic();
 }
@@ -403,4 +391,138 @@ if(id === "love"){
 
 setTimeout(()=>showSection('love'),2500);
 
-// (Everything below this remains exactly as you wrote it — unchanged)
+// ===== RUNAWAY BUTTON =====
+let runaway=document.getElementById("runaway");
+runaway.addEventListener("mouseover",()=>moveButton());
+runaway.addEventListener("touchstart",()=>moveButton());
+runaway.addEventListener("click",()=>moveButton());
+
+function moveButton(){
+runaway.style.transform="translate("+(Math.random()*120-60)+"px,"+(Math.random()*60-30)+"px)";
+}
+
+// ===== QUIZ =====
+function answerQuiz(){
+document.getElementById("quizMsg").innerHTML="We're both idiots in love 😌💕";
+document.getElementById("continueBtn").style.display="inline-block";
+}
+
+// ===== HOLD BUTTON =====
+let holdTimer;
+let holdBtn=document.getElementById("holdBtn");
+
+holdBtn.addEventListener("mousedown",startHold);
+holdBtn.addEventListener("touchstart",startHold);
+holdBtn.addEventListener("mouseup",cancelHold);
+holdBtn.addEventListener("mouseleave",cancelHold);
+holdBtn.addEventListener("touchend",cancelHold);
+
+function startHold(){
+holdTimer=setTimeout(showFinal,1200);
+}
+function cancelHold(){clearTimeout(holdTimer);}
+
+function showFinal(){
+showSection('final');
+
+let text=`Grace...
+
+I love you in your quiet phases.
+I love you when you overthink.
+I love you when you're healing.
+
+Distance doesn't scare me.
+The only thing that scares me is a future without you.
+
+You are my peace.
+My comfort.
+My safe place.
+
+Happy Valentine's Day, Mawi.
+I choose you. Always. ❤️`;
+
+let i=0;
+let finalText=document.getElementById("finalText");
+finalText.innerHTML="";
+document.getElementById("secretHeart").style.display="none";
+
+function type(){
+if(i<text.length){
+finalText.innerHTML+=text.charAt(i);
+i++;
+setTimeout(type,35);
+}else{
+document.getElementById("secretHeart").style.display="inline-block";
+}
+}
+type();
+
+activateHeartRain();
+confetti();
+}
+
+document.getElementById("secretHeart").addEventListener("click",function(){
+showSection('letterPage');
+startLetterEffects();
+});
+
+function startLetterEffects(){
+
+let text=`🫠
+
+And I want to say something honestly…
+
+I know I've hurt you sometimes. I know I've made mistakes, said things out of jealousy, confusion, or overthinking. And I'm truly sorry for that.
+
+I'm not perfect. I struggle to read emotions through text. Even when you're clear, I sometimes misunderstand. English isn't easy for me. Expressing myself isn't easy for me. But loving you has always been real.
+
+That night when I wasn't there the way you needed me… I regret it deeply. I didn't even realize when I fell asleep. I wish I could redo that moment. I'm sorry from my heart.
+
+About the jealousy -- especially about God -- I want you to know it doesn't come from hate. It comes from insecurity. I'm still learning how to handle those feelings maturely. I may not believe the same way you do, but I respect your faith. I just need time to grow.
+
+About Pinterest -- I genuinely didn't know you followed me. When I checked and saw things differently, it made me overthink and react emotionally. I shouldn't have said what I said. That was my mistake.
+
+I'm not a demon. I'm not trying to ruin anything. I'm just a young boy still learning how to love properly. And I want to grow. I want to become better -- not just for you, but for myself.
+
+Even when we fight, even when I get angry, the truth is simple: you are the only person I've loved like this.
+
+I don't want to pressure you. I don't want to trap you. I just want to build something healthier, stronger, and more mature together.
+
+I hope we both grow. I hope we both heal. I hope we both achieve our dreams -- maybe side by side.
+
+Thank you for loving me despite my flaws.
+And I promise I'm trying to become someone worthy of loving you better.
+
+Wishing you the happiest and most beautiful Valentine's Day 💝
+
+Yours,  
+Sumedh`;
+
+let i=0;
+let paragraph=document.getElementById("secretParagraph");
+paragraph.innerHTML="";
+
+function typeLetter(){
+if(i<text.length){
+paragraph.innerHTML+=text.charAt(i);
+i++;
+setTimeout(typeLetter,40);
+}
+}
+typeLetter();
+
+setInterval(()=>{
+let heart=document.createElement("div");
+heart.classList.add("heart");
+heart.innerHTML="💝";
+heart.style.left=Math.random()*window.innerWidth+"px";
+heart.style.animationDuration=(Math.random()*3+4)+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),7000);
+},500);
+}
+
+</script>
+
+</body>
+</html>
