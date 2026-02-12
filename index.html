@@ -350,29 +350,48 @@ pointer-events:none;
 <script>
 
 // ===== BACKGROUND MUSIC SYSTEM =====
-let musicStarted = false;
-let bgMusic = document.getElementById("bgMusic");
-bgMusic.volume = 0;
 
-function playMusic() {
-  if (!musicStarted) {
-    bgMusic.play();
-    fadeInMusic();
-    musicStarted = true;
-  }
-}
+document.addEventListener("DOMContentLoaded", function () {
 
-function fadeInMusic(){
-  let vol = 0;
-  let fade = setInterval(function(){
-    if(vol < 0.4){
-      vol += 0.02;
-      bgMusic.volume = vol;
-    } else {
-      clearInterval(fade);
+    let musicStarted = false;
+    let bgMusic = document.getElementById("bgMusic");
+
+    if (!bgMusic) {
+        console.log("Audio element not found");
+        return;
     }
-  }, 200);
-}
+
+    bgMusic.volume = 0;
+
+    function playMusic() {
+        if (!musicStarted) {
+            bgMusic.play().then(() => {
+                fadeInMusic();
+                musicStarted = true;
+            }).catch(error => {
+                console.log("Playback prevented:", error);
+            });
+        }
+    }
+
+    function fadeInMusic() {
+        let vol = 0;
+        let fade = setInterval(function () {
+            if (vol < 0.4) {
+                vol += 0.02;
+                bgMusic.volume = vol;
+            } else {
+                clearInterval(fade);
+            }
+        }, 200);
+    }
+
+    // Start music on first click anywhere
+    document.addEventListener("click", function () {
+        playMusic();
+    }, { once: true });
+
+});
 
 // Required for mobile autoplay rules
 document.addEventListener("click", playMusic);
@@ -525,4 +544,5 @@ setTimeout(()=>heart.remove(),7000);
 </script>
 
 </body>
+
 </html>
